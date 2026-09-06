@@ -79,85 +79,57 @@ class HomePage extends StatelessWidget {
         foregroundColor: Colors.white,
         title: const Text('🌱 BABA AGRO'),
       ),
-      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: FirebaseFirestore.instance
-            .collection('members')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          final docs = snapshot.data?.docs ?? [];
-          final members = docs.map(Member.fromDoc).toList();
-          final totalEarning =
-              members.fold<num>(0, (sum, m) => sum + m.earning);
-
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const Text('Dashboard',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatCard(
-                        value: '${members.length}', label: 'एकूण IDs'),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _StatCard(
-                        value: '₹$totalEarning',
-                        label: 'Approved Earnings'),
-                  ),
-                ],
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Text(
+            'Dashboard',
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          const _StatCard(
+            title: 'Total IDs',
+            value: '0',
+          ),
+          const SizedBox(height: 12),
+          const _StatCard(
+            title: 'Approved Earnings',
+            value: '₹0',
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.person_add_alt_1),
+            label: const Text('नवीन ID नोंदणी'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const RegistrationPage(),
               ),
-              const SizedBox(height: 18),
-              _MenuButton(
-                icon: Icons.person_add_alt_1,
-                text: 'नवीन ID नोंदणी',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const RegistrationPage()),
-                ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.shopping_bag_outlined),
+            label: const Text('Products'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ProductsPage(),
               ),
-              _MenuButton(
-                icon: Icons.shopping_bag_outlined,
-                text: 'Products',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProductsPage()),
-                ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.currency_rupee),
+            label: const Text('Earnings'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const EarningsPage(),
               ),
-              _MenuButton(
-                icon: Icons.currency_rupee,
-                text: 'Earnings',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const EarningsPage()),
-                ),
-              ),
-              _MenuButton(
-                icon: Icons.admin_panel_settings_outlined,
-                text: 'Admin Panel',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AdminPage()),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Text(
-                    'सुरक्षेसाठी Aadhaar, PAN किंवा bank documents या prototype मध्ये साठवले जात नाहीत.',
-                    style: TextStyle(color: Colors.grey.shade700),
-                  ),
-                ),
-              )
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
