@@ -1,0 +1,16 @@
+BABA AGRO ANDROID SETUP
+
+1. Flutter SDK install करा.
+2. Android Studio install करा.
+3. या project folder मध्ये terminal उघडा.
+4. flutter pub get
+5. Firebase project तयार करा.
+6. Android package: com.babaagro.app
+7. google-services.json -> android/app/ मध्ये ठेवा.
+8. flutterfire configure
+9. Firebase Authentication + Firestore rules configure करा.
+10. flutter run
+11. Release APK: flutter build apk --release
+12. Play Store AAB: flutter build appbundle --release
+
+टीप: हा source-code project आहे. या environment मध्ये Android SDK/Flutter compiler उपलब्ध नसल्यामुळे APK/AAB compile केलेला नाही.
