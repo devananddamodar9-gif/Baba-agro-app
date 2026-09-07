@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
@@ -245,6 +246,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final name = TextEditingController();
   final mobile = TextEditingController();
   final city = TextEditingController();
+  final password = TextEditingController();
   bool saving = false;
 
   String makeId() =>
@@ -254,8 +256,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final n = name.text.trim();
     final m = mobile.text.trim();
     final c = city.text.trim();
+    final p = password.text.trim();
 
-    if (n.isEmpty || !RegExp(r'^[0-9]{10}$').hasMatch(m)) {
+    if (n.isEmpty || !RegExp(r'^[0-9]{10}$').hasMatch(m)) || p.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('नाव आणि योग्य 10 अंकी मोबाइल क्रमांक भरा.')),
       );
@@ -280,6 +283,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       }
 
       final memberId = makeId();
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: '$m@babaagro.app', password: p);
       await FirebaseFirestore.instance.collection('members').add({
         'memberId': memberId,
         'name': n,
@@ -336,6 +340,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           const SizedBox(height: 12),
           TextField(controller: city, decoration: const InputDecoration(labelText: 'गाव / शहर')),
+            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: 'Password (किमान 6 अक्षरे)')),
+            const SizedBox(height: 20),
           const SizedBox(height: 20),
           FilledButton(
             onPressed: saving ? null : save,
