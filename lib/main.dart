@@ -588,6 +588,59 @@ class AdminPage extends StatefulWidget {
 class _AdminPageState extends State<AdminPage> {
   String queryText = '';
 
+
+  Future<void> addProduct() async {
+    final nameController = TextEditingController();
+    final priceController = TextEditingController();
+
+    final save = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('नवीन Product'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Product नाव',
+              ),
+            ),
+            TextField(
+              controller: priceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Price',
+                prefixText: '₹ ',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+
+    if (save == true &&
+        nameController.text.trim().isNotEmpty &&
+        priceController.text.trim().isNotEmpty) {
+      await FirebaseFirestore.instance.collection('products').add({
+        'name': nameController.text.trim(),
+        'price': double.tryParse(priceController.text.trim()) ?? 0,
+        'active': true,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
   Future<void> updateEarning(Member m) async {
     final controller = TextEditingController(text: '${m.earning}');
     final value = await showDialog<num>(
@@ -636,6 +689,8 @@ class _AdminPageState extends State<AdminPage> {
               ),
             ),
           ),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: SizedBox(width: double.infinity, child: FilledButton.icon(onPressed: addProduct, icon: const Icon(Icons.add_shopping_cart), label: const Text("Add Product")))),
+        const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
