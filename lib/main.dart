@@ -88,12 +88,12 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           const _StatCard(
-            title: 'Total IDs',
+            label: 'Total IDs',
             value: '0',
           ),
           const SizedBox(height: 12),
           const _StatCard(
-            title: 'Approved Earnings',
+            label: 'Approved Earnings',
             value: '₹0',
           ),
           const SizedBox(height: 20),
