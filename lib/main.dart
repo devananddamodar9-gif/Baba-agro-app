@@ -624,18 +624,6 @@ class _AdminPageState extends State<AdminPage> {
                 prefixText: '₹ ',
               ),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.share),
-              label: const Text('Refer'),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Refer option लवकरच सुरू होईल')),
-                );
-              },
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
