@@ -337,29 +337,210 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 }
 
+
 class ProductsPage extends StatelessWidget {
   const ProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const products = ['बियाणे', 'खते', 'कीटकनाशके'];
     return Scaffold(
-      appBar: AppBar(title: const Text('Products')),
-      body: ListView.separated(
+      appBar: AppBar(
+        title: const Text('Baba Agro Products'),
+      ),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('products')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final products = snapshot.data?.docs ?? [];
+
+          if (products.isEmpty) {
+            return const Center(
+              child: Text('अजून Products उपलब्ध नाहीत.'),
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final doc = products[index];
+              final data = doc.data();
+              final name = data['name'] ?? 'Product';
+              final price = (data['price'] ?? 0) as num;
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: ListTile(
+                  leading: const Icon(Icons.agriculture),
+                  title: Text(
+                    name.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Price: ₹${price.toStringAsFixed(0)}',
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => OrderPage(
+                            productId: doc.id,
+                            productName: name.toString(),
+                            price: price.toDouble(),
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Order'),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+class OrderPage extends StatefulWidget {
+  final String productId;
+  final String productName;
+  final double price;
+
+  const OrderPage({
+    super.key,
+    required this.productId,
+    required this.productName,
+    required this.price,
+  });
+
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  final baIdController = TextEditingController();
+  int quantity = 1;
+  bool saving = false;
+
+  double get total => widget.price * quantity;
+
+  Future<void> placeOrder() async {
+    final baId = baIdController.text.trim();
+
+    if (baId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('तुमचा BA ID टाका')),
+      );
+      return;
+    }
+
+    setState(() => saving = true);
+
+    try {
+      await FirebaseFirestore.instance.collection('orders').add({
+        'baId': baId,
+        'productId': widget.productId,
+        'productName': widget.productName,
+        'price': widget.price,
+        'quantity': quantity,
+        'total': total,
+        'status': 'New',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order यशस्वी झाला')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Order झाला नाही: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => saving = false);
+      }
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Place Order')),
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        itemCount: products.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (_, i) => Card(
-          child: ListTile(
-            leading: const Icon(Icons.agriculture),
-            title: Text(products[i]),
-            subtitle: const Text('Product details पुढे जोडता येतील.'),
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              widget.productName,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text('Price: ₹${widget.price.toStringAsFixed(0)}'),
+            const SizedBox(height: 20),
+            TextField(
+              controller: baIdController,
+              decoration: const InputDecoration(
+                labelText: 'तुमचा BA ID',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                const Text('Quantity: '),
+                IconButton(
+                  onPressed: quantity > 1
+                      ? () => setState(() => quantity--)
+                      : null,
+                  icon: const Icon(Icons.remove),
+                ),
+                Text(
+                  '$quantity',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                IconButton(
+                  onPressed: () => setState(() => quantity++),
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Total: ₹${total.toStringAsFixed(0)}',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: saving ? null : placeOrder,
+              child: Text(saving ? 'Please wait...' : 'Order करा'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
 
 class EarningsPage extends StatelessWidget {
   const EarningsPage({super.key});
