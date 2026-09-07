@@ -33,7 +33,7 @@ class BabaAgroApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFFF4F7F2),
       ),
-      home: const HomePage(),
+      home: const LoginPage(),
     );
   }
 }
@@ -64,6 +64,95 @@ class Member {
       mobile: (data['mobile'] ?? '').toString(),
       city: (data['city'] ?? '').toString(),
       earning: (data['earning'] ?? 0) as num,
+    );
+  }
+}
+
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final idController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool hidePassword = true;
+
+  void login() {
+    if (idController.text.trim().isEmpty ||
+        passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ID आणि Password टाका')),
+      );
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                const Icon(Icons.agriculture, size: 80, color: Color(0xFF176B38)),
+                const SizedBox(height: 16),
+                const Text(
+                  'BABA AGRO',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text('Login to continue'),
+                const SizedBox(height: 32),
+                TextField(
+                  controller: idController,
+                  decoration: const InputDecoration(
+                    labelText: 'ID Number',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: passwordController,
+                  obscureText: hidePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        hidePassword ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () =>
+                          setState(() => hidePassword = !hidePassword),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: login,
+                    child: const Text('LOGIN'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
