@@ -217,6 +217,7 @@ class HomePage extends StatelessWidget {
                 builder: (_) => const EarningsPage(),
               ),
             ),
+          ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
               icon: const Icon(Icons.share),
@@ -227,7 +228,6 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-          ),
         ],
       ),
     );
@@ -623,6 +623,16 @@ class _AdminPageState extends State<AdminPage> {
                 labelText: 'Price',
                 prefixText: '₹ ',
               ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.share),
+              label: const Text('Refer'),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Refer option लवकरच सुरू होईल')),
+                );
+              },
             ),
           ],
         ),
