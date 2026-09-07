@@ -624,6 +624,8 @@ class _AdminPageState extends State<AdminPage> {
                 prefixText: '₹ ',
               ),
             ),
+              ],
+            ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
