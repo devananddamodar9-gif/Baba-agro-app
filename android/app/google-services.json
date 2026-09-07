@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "693859740222",
+    "project_id": "baba-agro-b465f",
+    "storage_bucket": "baba-agro-b465f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693859740222:android:7da03b0d75e0a6b055ff6f",
+        "android_client_info": {
+          "package_name": "com.babaagro.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB68IhxO0VYKdGtEute0P7uXGTHhcXHNqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
