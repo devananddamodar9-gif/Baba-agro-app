@@ -258,7 +258,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final c = city.text.trim();
     final p = password.text.trim();
 
-    if (n.isEmpty || !RegExp(r'^[0-9]{10}$').hasMatch(m)) || p.length < 6) {
+    if (n.isEmpty || !RegExp(r'^[0-9]{10}$').hasMatch(m) || p.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('नाव आणि योग्य 10 अंकी मोबाइल क्रमांक भरा.')),
       );
